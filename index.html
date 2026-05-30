@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SkillShare Community</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <h1>🤝 SkillShare Community</h1>
+    <p>Learn. Teach. Grow together.</p>
+  </header>
+
+  <div class="container">
+
+    <div class="top-bar">
+      <input id="search" placeholder="🔍 Search skills..." onkeyup="searchSkills()">
+      <button onclick="toggleForm()">➕ Add Skill</button>
+    </div>
+
+    <!-- FORM -->
+    <div id="formCard" class="card hidden">
+      <h2>Share Your Skill</h2>
+
+      <input id="name" placeholder="Your Name">
+      <input id="skill" placeholder="Skill (e.g. Cooking)">
+      <input id="location" placeholder="Location">
+      <input id="contact" placeholder="WhatsApp Number">
+      <textarea id="desc" placeholder="Short description"></textarea>
+
+      <button onclick="addSkill()">Publish Skill</button>
+    </div>
+
+    <!-- SKILLS -->
+    <div id="skills"></div>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
