@@ -1,40 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillShare Community</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <header>
-    <h1>🤝 SkillShare Community</h1>
-    <p>Learn. Teach. Grow together.</p>
+    <nav>
+      <h1>🤝 SkillShare Community</h1>
+      <div class="nav-links">
+        <a href="#/home" class="nav-btn">🏠 Home</a>
+        <a href="#/add" class="nav-btn">➕ Add Skill</a>
+      </div>
+    </nav>
+    <p class="tagline">Learn. Teach. Grow together.</p>
   </header>
 
-  <div class="container">
+  <main class="container">
+    <!-- HOME PAGE -->
+    <section id="home-page" class="page">
+      <div class="top-bar">
+        <input type="text" id="search" placeholder="Search by skill or location...">
+        <button onclick="app.search()">🔍 Search</button>
+      </div>
+      <div id="skills-grid" class="grid"></div>
+      <p id="no-results" class="hidden">No skills found. Try a different search or <a href="#/add">add one!</a></p>
+    </section>
 
-    <div class="top-bar">
-      <input id="search" placeholder="🔍 Search skills..." onkeyup="searchSkills()">
-      <button onclick="toggleForm()">➕ Add Skill</button>
-    </div>
+    <!-- ADD SKILL PAGE -->
+    <section id="add-page" class="page hidden">
+      <div class="card form-card">
+        <h2>📝 Publish Your Skill</h2>
+        <form id="skill-form">
+          <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" id="name" required>
+          </div>
+          <div class="form-group">
+            <label>Skill Title</label>
+            <input type="text" id="skill" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Location</label>
+              <input type="text" id="location" required>
+            </div>
+            <div class="form-group">
+              <label>WhatsApp (with country code)</label>
+              <input type="tel" id="contact" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="desc" rows="4" required></textarea>
+          </div>
+          <div class="form-group">
+            <label>Profile Photo</label>
+            <input type="file" id="photo" accept="image/*">
+          </div>
+          <div class="form-group">
+            <label>Video Links (YouTube/Vimeo, one per line)</label>
+            <textarea id="videos" rows="3" placeholder="https://youtu.be/..."></textarea>
+          </div>
+          <button type="submit">🚀 Publish Skill</button>
+        </form>
+      </div>
+    </section>
 
-    <!-- FORM -->
-    <div id="formCard" class="card hidden">
-      <h2>Share Your Skill</h2>
-
-      <input id="name" placeholder="Your Name">
-      <input id="skill" placeholder="Skill (e.g. Cooking)">
-      <input id="location" placeholder="Location">
-      <input id="contact" placeholder="WhatsApp Number">
-      <textarea id="desc" placeholder="Short description"></textarea>
-
-      <button onclick="addSkill()">Publish Skill</button>
-    </div>
-
-    <!-- SKILLS -->
-    <div id="skills"></div>
-
-  </div>
+    <!-- DETAIL PAGE -->
+    <section id="detail-page" class="page hidden">
+      <button class="back-btn" onclick="app.navigate('/home')">← Back to Home</button>
+      <div id="detail-content" class="card detail-card"></div>
+    </section>
+  </main>
 
   <script src="app.js"></script>
 </body>
