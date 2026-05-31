@@ -5,75 +5,44 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SkillShare Community</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <header>
-    <nav>
-      <h1>🤝 SkillShare Community</h1>
-      <div class="nav-links">
-        <a href="#/home" class="nav-btn">🏠 Home</a>
-        <a href="#/add" class="nav-btn">➕ Add Skill</a>
-      </div>
-    </nav>
-    <p class="tagline">Learn. Teach. Grow together.</p>
+    <h1>🤝 SkillShare Community</h1>
+    <p>Learn. Teach. Grow together.</p>
   </header>
 
   <main class="container">
-    <!-- HOME PAGE -->
-    <section id="home-page" class="page">
-      <div class="top-bar">
-        <input type="text" id="search" placeholder="Search by skill or location...">
-        <button onclick="app.search()">🔍 Search</button>
-      </div>
-      <div id="skills-grid" class="grid"></div>
-      <p id="no-results" class="hidden">No skills found. Try a different search or <a href="#/add">add one!</a></p>
-    </section>
+    <div class="top-bar">
+      <input type="text" id="search" placeholder="Search by skill or location...">
+      <button onclick="searchSkills()">🔍 Search</button>
+    </div>
 
-    <!-- ADD SKILL PAGE -->
-    <section id="add-page" class="page hidden">
-      <div class="card form-card">
-        <h2>📝 Publish Your Skill</h2>
-        <form id="skill-form">
-          <div class="form-group">
-            <label>Your Name</label>
-            <input type="text" id="name" required>
-          </div>
-          <div class="form-group">
-            <label>Skill Title</label>
-            <input type="text" id="skill" required>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Location</label>
-              <input type="text" id="location" required>
-            </div>
-            <div class="form-group">
-              <label>WhatsApp (with country code)</label>
-              <input type="tel" id="contact" required>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Description</label>
-            <textarea id="desc" rows="4" required></textarea>
-          </div>
-          <div class="form-group">
-            <label>Profile Photo</label>
-            <input type="file" id="photo" accept="image/*">
-          </div>
-          <div class="form-group">
-            <label>Video Links (YouTube/Vimeo, one per line)</label>
-            <textarea id="videos" rows="3" placeholder="https://youtu.be/..."></textarea>
-          </div>
-          <button type="submit">🚀 Publish Skill</button>
-        </form>
-      </div>
-    </section>
+    <div class="card" id="formCard">
+      <h2>➕ Share Your Skill</h2>
+      <form id="skill-form">
+        <input type="text" id="name" placeholder="Your Name" required style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc">
+        <input type="text" id="skill" placeholder="Skill Title (e.g., Python Tutor)" required style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc">
+        <input type="text" id="location" placeholder="Location" required style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc">
+        <input type="tel" id="contact" placeholder="WhatsApp (with country code, e.g., 233...)" required style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc">
+        <textarea id="desc" placeholder="Describe your skill..." rows="3" required style="width:100%;padding:10px;margin:8px 0;border-radius:8px;border:1px solid #ccc"></textarea>
+        
+        <label style="display:block;margin:10px 0 5px;font-weight:bold">📷 Profile Photo</label>
+        <input type="file" id="photo" accept="image/*" style="width:100%;padding:8px;margin:8px 0">
+        
+        <label style="display:block;margin:10px 0 5px;font-weight:bold">🎥 Videos (MP4, WebM)</label>
+        <input type="file" id="videos" accept="video/*" multiple style="width:100%;padding:8px;margin:8px 0">
+        
+        <label style="display:block;margin:10px 0 5px;font-weight:bold">📄 Documents (PDF, DOCX, ZIP)</label>
+        <input type="file" id="docs" accept=".pdf,.docx,.zip,.txt" multiple style="width:100%;padding:8px;margin:8px 0">
+        
+        <button type="submit" id="submit-btn" style="width:100%;margin-top:15px">🚀 Publish Skill</button>
+      </form>
+    </div>
 
-    <!-- DETAIL PAGE -->
-    <section id="detail-page" class="page hidden">
-      <button class="back-btn" onclick="app.navigate('/home')">← Back to Home</button>
-      <div id="detail-content" class="card detail-card"></div>
-    </section>
+    <h2 style="margin-top:30px">📚 Available Skills</h2>
+    <div id="skills"></div>
   </main>
 
   <script src="app.js"></script>
