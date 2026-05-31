@@ -5,7 +5,134 @@ const app = {
     this.setupRouter();
     this.setupForm();
     document.getElementById("search").addEventListener("input", (e) => this.search(e.target.value));
-  },
+  },// ⚠️ YOUR SUPABASE CREDENTIALS
+const SUPABASE_URL = 'https://exzhqanszlmgvzjcpslm.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV4emhxYW5zemxtZ3Z6amNwc2xtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxODk1NTUsImV4cCI6MjA5NTc2NTU1NX0.2wr7ivDk3VwA1H9jkOVTFn4-Q8h-quaTv3DE39J29pg';
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let skills = [];
+
+async function init() {
+  await fetchSkills();
+  renderSkills();
+  document.getElementById("skill-form").addEventListener("submit", addSkill);
+  document.getElementById("search").addEventListener("input", searchSkills);
+}
+
+async function fetchSkills() {
+  const { data, error } = await sb.from("skills").select("*").order("created_at", { ascending: false });
+  if (error) {
+    console.error("Error:", error);
+    alert("Failed to load skills. Check console.");
+  } else {
+    skills = data || [];
+  }
+}
+
+async function addSkill(e) {
+  e.preventDefault();
+  const btn = document.getElementById("submit-btn");
+  btn.disabled = true;
+  btn.textContent = "⏳ Uploading...";
+
+  try {
+    // Upload photo
+    const photoFile = document.getElementById("photo").files[0];
+    let photoUrl = null;
+    if (photoFile) {
+      const photoName = `${Date.now()}-${photoFile.name}`;
+      await sb.storage.from("profiles").upload(photoName, photoFile);
+      const { data: { publicUrl } } = sb.storage.from("profiles").getPublicUrl(photoName);
+      photoUrl = publicUrl;
+    }
+
+    // Upload videos
+    const videoFiles = document.getElementById("videos").files;
+    const videoUrls = [];
+    for (let file of videoFiles) {
+      const videoName = `${Date.now()}-${file.name}`;
+      await sb.storage.from("videos").upload(videoName, file);
+      const { data: { publicUrl } } = sb.storage.from("videos").getPublicUrl(videoName);
+      videoUrls.push(publicUrl);
+    }
+
+    // Upload documents
+    const docFiles = document.getElementById("docs").files;
+    const docUrls = [];
+    for (let file of docFiles) {
+      const docName = `${Date.now()}-${file.name}`;
+      await sb.storage.from("documents").upload(docName, file);
+      const { data: { publicUrl } } = sb.storage.from("documents").getPublicUrl(docName);
+      docUrls.push(publicUrl);
+    }
+
+    // Save to database
+    const newSkill = {
+      name: document.getElementById("name").value,
+      skill: document.getElementById("skill").value,
+      location: document.getElementById("location").value,
+      contact: document.getElementById("contact").value.replace(/\D/g, ""),
+      description: document.getElementById("desc").value,
+      photo_url: photoUrl,
+      video_urls: videoUrls,
+      doc_urls: docUrls
+    };
+
+    const { error } = await sb.from("skills").insert(newSkill);
+    if (error) throw error;
+
+    alert("✅ Skill published successfully!");
+    document.getElementById("skill-form").reset();
+    await fetchSkills();
+    renderSkills();
+  } catch (err) {
+    console.error(err);
+    alert("❌ Error: " + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "🚀 Publish Skill";
+  }
+}
+
+function renderSkills(list = skills) {
+  const container = document.getElementById("skills");
+  container.innerHTML = "";
+  
+  if (list.length === 0) {
+    container.innerHTML = "<p style='text-align:center;color:#777;margin-top:30px'>No skills found. Be the first to share!</p>";
+    return;
+  }
+
+  list.forEach(s => {
+    const img = s.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(s.name)}&background=random`;
+    container.innerHTML += `
+      <div class="card skill">
+        <img src="${img}" alt="${s.name}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;float:left;margin-right:15px">
+        <h3>👤 ${s.name}</h3>
+        <span class="badge">${s.skill}</span>
+        <p>📍 ${s.location}</p>
+        <p>${s.description || s.desc || ''}</p>
+        ${s.video_urls && s.video_urls.length > 0 ? `<p>🎥 ${s.video_urls.length} video(s)</p>` : ''}
+        ${s.doc_urls && s.doc_urls.length > 0 ? `<p>📄 ${s.doc_urls.length} document(s)</p>` : ''}
+        <a class="contact" href="https://wa.me/${s.contact}" target="_blank">💬 WhatsApp</a>
+      </div>
+    `;
+  });
+}
+
+function searchSkills() {
+  const value = document.getElementById("search").value.toLowerCase();
+  const filtered = skills.filter(s =>
+    s.skill.toLowerCase().includes(value) ||
+    s.location.toLowerCase().includes(value) ||
+    s.name.toLowerCase().includes(value)
+  );
+  renderSkills(filtered);
+}
+
+// Start app
+document.addEventListener("DOMContentLoaded", init);
 
   setupRouter() {
     const handleHash = () => {
